@@ -1,55 +1,81 @@
-const { ApolloServer, gql } = require('apollo-server');
+const { ApolloServer, gql } = require('apollo-server-micro');
 
-// This is a (sample) collection of books we'll be able to query
-// the GraphQL server for.  A more complete example might fetch
-// from an existing data source like a REST API or database.
 const books = [
-  {
-    title: 'Harry Potter and the Chamber of Secrets',
-    author: 'J.K. Rowling',
-  },
-  {
-    title: 'Jurassic Park',
-    author: 'Michael Crichton',
-  },
+  { id: 1, title: 'The Trials of Brother Jero', rating: 8, authorId: 1 },
+  { id: 2, title: 'Half of a Yellow Sun', rating: 9, authorId: 3 },
+  { id: 3, title: 'Americanah', rating: 9, authorId: 3 },
+  { id: 4, title: 'King Baabu', rating: 9, authorId: 1 },
+  { id: 5, title: 'Children of Blood and Bone', rating: 8, authorId: 2 },
 ];
 
-// Type definitions define the "shape" of your data and specify
-// which ways the data can be fetched from the GraphQL server.
+const authors = [
+  { id: 1, firstName: 'Wole', lastName: 'Soyinka' },
+  { id: 2, firstName: 'Tomi', lastName: 'Adeyemi' },
+  { id: 3, firstName: 'Chimamanda', lastName: 'Adichie' },
+];
+
 const typeDefs = gql`
-  # Comments in GraphQL are defined with the hash (#) symbol.
-
-  # This "Book" type can be used in other type declarations.
-  type Book {
-    title: String
-    author: String
+  type Author {
+    id: Int!
+    firstName: String!
+    lastName: String!
+    books: [Book]! # the list of books by this author
   }
-
-  # The "Query" type is the root of all GraphQL queries.
-  # (A "Mutation" type will be covered later on.)
+  type Book {
+    id: Int!
+    title: String!
+    rating: Int!
+    author: Author!
+  }
+  # the schema allows the following query
   type Query {
-    books: [Book]
+    books: [Book!]!
+    book(id: Int!): Book!
+    author(id: Int!): Author!
+  }
+  # this schema allows the following mutation
+  type Mutation {
+    addBook(title: String!, rating: Int!, authorId: Int!): Book!
   }
 `;
 
-// Resolvers define the technique for fetching the types in the
-// schema.  We'll retrieve books from the "books" array above.
+let bookId = 5;
+
 const resolvers = {
   Query: {
     books: () => books,
+    book: (_, { id }) => books.find(book => book.id === id),
+    author: (_, { id }) => authors.find(author => author.id === id),
+  },
+  Mutation: {
+    addBook: (_, { title, rating, authorId }) => {
+      bookId++;
+
+      const newBook = {
+        id: bookId,
+        title,
+        rating,
+        authorId,
+      };
+
+      books.push(newBook);
+      return newBook;
+    },
+  },
+  Author: {
+    books: author => books.filter(book => book.authorId === author.id),
+  },
+  Book: {
+    author: book => authors.find(author => author.id === book.authorId),
   },
 };
 
-// In the most basic sense, the ApolloServer can be started
-// by passing type definitions (typeDefs) and the resolvers
-// responsible for fetching the data for those types.
-const server = new ApolloServer({ typeDefs, resolvers });
-
-// This `listen` method launches a web-server.  Existing apps
-// can utilize middleware options, which we'll discuss later.
-/* server.listen().then(({ url }) => {
-  console.log(`🚀  Server ready at ${url}`);
-}); */
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  introspection: true,
+  playground: true,
+});
 
 module.exports = server.createHandler();
 
