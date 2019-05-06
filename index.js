@@ -1,76 +1,54 @@
 const { ApolloServer, gql } = require('apollo-server-micro');
-
-const books = [
-  { id: 1, title: 'The Trials of Brother Jero', rating: 8, authorId: 1 },
-  { id: 2, title: 'Half of a Yellow Sun', rating: 9, authorId: 3 },
-  { id: 3, title: 'Americanah', rating: 9, authorId: 3 },
-  { id: 4, title: 'King Baabu', rating: 9, authorId: 1 },
-  { id: 5, title: 'Children of Blood and Bone', rating: 8, authorId: 2 },
-];
-
-const authors = [
-  { id: 1, firstName: 'Wole', lastName: 'Soyinka' },
-  { id: 2, firstName: 'Tomi', lastName: 'Adeyemi' },
-  { id: 3, firstName: 'Chimamanda', lastName: 'Adichie' },
-];
+const { RESTDataSource } = require("apollo-datasource-rest");
 
 const typeDefs = gql`
-  type Author {
-    id: Int!
-    firstName: String!
-    lastName: String!
-    books: [Book]! # the list of books by this author
+  type Pokemon {
+    name: String!
+    imageUrl: String!
   }
-  type Book {
-    id: Int!
-    title: String!
-    rating: Int!
-    author: Author!
-  }
-  # the schema allows the following query
   type Query {
-    books: [Book!]!
-    book(id: Int!): Book!
-    author(id: Int!): Author!
-  }
-  # this schema allows the following mutation
-  type Mutation {
-    addBook(title: String!, rating: Int!, authorId: Int!): Book!
+    pokemons: [Pokemon!]!
   }
 `;
 
-let bookId = 5;
+
+class PokeAPI extends RESTDataSource {
+  constructor() {
+    super();
+    this.baseURL = "https://pokeapi.co/api/v2";
+  }
+
+  async getByName(name) {
+    return this.get(`/pokemon/${name}`);
+  }
+
+  async getList() {
+    const data = await this.get("/pokemon");
+    const promises = data.results.map(pokemon => this.getByName(pokemon.name));
+  
+    return Promise.all(promises);
+  }
+}
+
+const dataSources = () => {
+  return {
+    pokeAPI: new PokeAPI()
+  };
+};
 
 const resolvers = {
   Query: {
-    books: () => books,
-    book: (_, { id }) => books.find(book => book.id === id),
-    author: (_, { id }) => authors.find(author => author.id === id),
+    pokemons: (_source, _args, { dataSources }) => dataSources.pokeAPI.getList()
   },
-  Mutation: {
-    addBook: (_, { title, rating, authorId }) => {
-      bookId++;
-
-      const newBook = {
-        id: bookId,
-        title,
-        rating,
-        authorId,
-      };
-
-      books.push(newBook);
-      return newBook;
-    },
-  },
-  Author: {
-    books: author => books.filter(book => book.authorId === author.id),
-  },
-  Book: {
-    author: book => authors.find(author => author.id === book.authorId),
-  },
+  Pokemon: {
+    imageUrl: pokemon => pokemon.sprites.front_default,
+    name: pokemon =>
+      pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)
+  }
 };
 
 const server = new ApolloServer({
+  dataSources,
   typeDefs,
   resolvers,
   introspection: true,
