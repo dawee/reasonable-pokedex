@@ -1,4 +1,4 @@
-const { ApolloServer, gql } = require('apollo-server-micro');
+const { ApolloServer, gql } = require('apollo-server');
 
 const books = [
   { id: 1, title: 'The Trials of Brother Jero', rating: 8, authorId: 1 },
