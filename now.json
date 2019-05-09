@@ -4,9 +4,17 @@
     {
       "src": "src/micro.js",
       "use": "@now/node"
+    },
+    {
+      "src": "index.html",
+      "use": "@now/static"
     }
   ],
   "routes": [
+    {
+      "src": "/",
+      "dest": "index.html"
+    },
     {
       "src": "/graphql",
       "dest": "src/micro.js"
