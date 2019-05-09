@@ -2,14 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "./src/micro.js",
+      "src": "src/micro.js",
       "use": "@now/node"
     }
   ],
   "routes": [
     {
       "src": "/.*",
-      "dest": "./src/micro.js"
+      "dest": "src/micro.js"
     }
   ]
 }
