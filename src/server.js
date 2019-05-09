@@ -10,8 +10,8 @@ class PokeAPI extends RESTDataSource {
     return this.get(`/pokemon/${name}`);
   }
 
-  async getList() {
-    const data = await this.get("/pokemon?offset=130");
+  async getList(offset) {
+    const data = await this.get(`/pokemon?offset=${offset}`);
     const promises = data.results.map(pokemon => this.getByName(pokemon.name));
 
     return Promise.all(promises);
@@ -57,7 +57,7 @@ function createServer({ ApolloServer, gql }) {
     }
 
     type Query {
-      pokemons: [Pokemon!]!
+      pokemons(offset: Int!): [Pokemon!]!
     }
   `;
 
@@ -69,7 +69,8 @@ function createServer({ ApolloServer, gql }) {
 
   const resolvers = {
     Query: {
-      pokemons: (_source, _args, { dataSources }) => dataSources.pokeAPI.getList()
+      pokemons: (_source, { offset }, { dataSources }) =>
+        dataSources.pokeAPI.getList(offset),
     },
     Pokemon: {
       name: pokemon => capitalize(pokemon.name)
