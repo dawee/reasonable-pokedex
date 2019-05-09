@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node src/dev.js"
+    "start": "nodemon src/dev.js"
   },
   "license": "MIT",
   "dependencies": {
@@ -13,6 +13,7 @@
     "micro": "^9.3.4"
   },
   "devDependencies": {
-    "apollo-server": "^2.5.0"
+    "apollo-server": "^2.5.0",
+    "nodemon": "^1.19.0"
   }
 }
