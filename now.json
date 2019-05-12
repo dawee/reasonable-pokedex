@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "src/server.js",
+      "src": "src/app.js",
       "use": "@now/node"
     },
     {
@@ -17,7 +17,7 @@
     },
     {
       "src": "/graphql",
-      "dest": "src/server.js"
+      "dest": "src/app.js"
     }
   ]
 }

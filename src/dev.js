@@ -1,9 +1,5 @@
-const apolloServer = require('apollo-server');
-const { createServer } = require("./server");
+const app = require("./app");
 
-const server = createServer(apolloServer);
-
-server.listen().then(({ url }) => {
-  console.log(`🚀  Server ready at ${url}`);
-});
-
+app.listen({ port: 4000 }, () =>
+  console.log(`🚀 Server ready at http://localhost:4000/graphql`)
+);
