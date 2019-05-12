@@ -9,6 +9,7 @@
   "dependencies": {
     "apollo-datasource-rest": "^0.3.2",
     "apollo-server-micro": "^2.4.8",
+    "express": "^4.16.4",
     "graphql": "^14.2.1",
     "micro": "^9.3.4"
   },
