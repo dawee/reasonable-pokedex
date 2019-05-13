@@ -13,6 +13,10 @@ class PokeAPI extends RESTDataSource {
     return this.get(`/pokemon/${name}`);
   }
 
+  async getById(id) {
+    return this.get(`/pokemon/${id}`);
+  }
+
   async getList(offset) {
     const data = await this.get(`/pokemon?offset=${offset}`);
     const promises = data.results.map(pokemon => this.getByName(pokemon.name));
@@ -58,8 +62,11 @@ const typeDefs = gql`
 
   type Query {
     pokemons(offset: Int!): [Pokemon!]!
+    myPokemons: [Pokemon!]!
   }
 `;
+
+const ownPokemons = [2, 10, 200];
 
 const dataSources = () => {
   return {
@@ -70,7 +77,9 @@ const dataSources = () => {
 const resolvers = {
   Query: {
     pokemons: (_source, { offset }, { dataSources }) =>
-      dataSources.pokeAPI.getList(offset)
+      dataSources.pokeAPI.getList(offset),
+    myPokemons: (_source, _args, { dataSources }) =>
+      Promise.all(ownPokemons.map(id => dataSources.pokeAPI.getById(id)))
   },
   Pokemon: {
     name: pokemon => capitalize(pokemon.name)
@@ -102,5 +111,33 @@ const app = express();
 app.use(cors());
 
 server.applyMiddleware({ app });
+
+const Sequelize = require("sequelize");
+const sequelize = new Sequelize(
+  `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${
+    process.env.DB_HOST
+  }:${process.env.DB_PORT}/${process.env.DB_NAME}`
+);
+
+// class User extends Sequelize.Model {}
+// User.init(
+//   {
+//     username: Sequelize.STRING,
+//     birthday: Sequelize.DATE
+//   },
+//   { sequelize, modelName: "user" }
+// );
+
+// sequelize
+//   .sync()
+//   .then(() =>
+//     User.create({
+//       username: "janedoe",
+//       birthday: new Date(1980, 6, 20)
+//     })
+//   )
+//   .then(jane => {
+//     console.log(jane.toJSON());
+//   });
 
 module.exports = app;
