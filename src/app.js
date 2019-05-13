@@ -54,10 +54,17 @@ const typeDefs = gql`
     shinyFemale: PokemonPostureSpriteSheet
   }
 
+  enum PokemonState {
+    unseen
+    seen
+    caught
+  }
+
   type Pokemon {
     id: Int!
     name: String!
     sprites: PokemonSpriteSheetCollection!
+    state: PokemonState!
   }
 
   type Mutation {
@@ -70,7 +77,7 @@ const typeDefs = gql`
   }
 `;
 
-const ownPokemons = [2, 10, 200];
+var ownPokemons = [];
 
 const dataSources = () => {
   return {
@@ -86,13 +93,16 @@ const resolvers = {
       Promise.all(ownPokemons.map(id => dataSources.pokeAPI.getById(id)))
   },
   Mutation: {
-    explore: (_source, _args, { dataSources }) => {
+    explore: async (_source, _args, { dataSources }) => {
       let randomPokemonId = Math.floor(Math.random() * Math.floor(150));
-      return dataSources.pokeAPI.getById(randomPokemonId);
+      let randomPokemon = await dataSources.pokeAPI.getById(randomPokemonId);
+      ownPokemons.push(randomPokemon.id);
+      return randomPokemon;
     }
   },
   Pokemon: {
-    name: pokemon => capitalize(pokemon.name)
+    name: pokemon => capitalize(pokemon.name),
+    state: pokemon => (ownPokemons.includes(pokemon.id) ? "seen" : "unseen")
   },
   PokemonSpriteSheetCollection: {
     default: sprites => ({
