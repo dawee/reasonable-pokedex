@@ -60,6 +60,10 @@ const typeDefs = gql`
     sprites: PokemonSpriteSheetCollection!
   }
 
+  type Mutation {
+    explore: Pokemon
+  }
+
   type Query {
     pokemons(offset: Int!): [Pokemon!]!
     myPokemons: [Pokemon!]!
@@ -80,6 +84,12 @@ const resolvers = {
       dataSources.pokeAPI.getList(offset),
     myPokemons: (_source, _args, { dataSources }) =>
       Promise.all(ownPokemons.map(id => dataSources.pokeAPI.getById(id)))
+  },
+  Mutation: {
+    explore: (_source, _args, { dataSources }) => {
+      let randomPokemonId = Math.floor(Math.random() * Math.floor(150));
+      return dataSources.pokeAPI.getById(randomPokemonId);
+    }
   },
   Pokemon: {
     name: pokemon => capitalize(pokemon.name)
