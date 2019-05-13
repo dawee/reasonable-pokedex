@@ -1,3 +1,4 @@
+const cors = require("cors");
 const express = require("express");
 const { ApolloServer, gql } = require("apollo-server-express");
 const { RESTDataSource } = require("apollo-datasource-rest");
@@ -97,6 +98,8 @@ const server = new ApolloServer({
 });
 
 const app = express();
+
+app.use(cors());
 
 server.applyMiddleware({ app });
 
