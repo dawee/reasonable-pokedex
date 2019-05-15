@@ -74,6 +74,7 @@ const typeDefs = gql`
 
   type Query {
     pokemons(offset: Int!): [Pokemon!]!
+    foo: String
   }
 `;
 
@@ -87,6 +88,33 @@ const dataSources = () => {
 
 const resolvers = {
   Query: {
+    foo: () => {
+      const Sequelize = require("sequelize");
+      const sequelize = new Sequelize(
+        `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${
+          process.env.DB_HOST
+        }:${process.env.DB_PORT}/${process.env.DB_NAME}`
+      );
+
+      class User extends Sequelize.Model {}
+      User.init(
+        {
+          username: Sequelize.STRING,
+          birthday: Sequelize.DATE
+        },
+        { sequelize, modelName: "user" }
+      );
+
+      return sequelize
+        .sync()
+        .then(() =>
+          User.create({
+            username: "janedoe",
+            birthday: new Date(1980, 6, 20)
+          })
+        )
+        .then(jane => JSON.stringify(jane.toJSON(), null, 2));
+    },
     pokemons: (_source, { offset }, { dataSources }) =>
       dataSources.pokeAPI.getList(offset)
   },
@@ -129,33 +157,5 @@ const app = express();
 app.use(cors());
 
 server.applyMiddleware({ app });
-
-// const Sequelize = require("sequelize");
-// const sequelize = new Sequelize(
-//   `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${
-//     process.env.DB_HOST
-//   }:${process.env.DB_PORT}/${process.env.DB_NAME}`
-// );
-
-// class User extends Sequelize.Model {}
-// User.init(
-//   {
-//     username: Sequelize.STRING,
-//     birthday: Sequelize.DATE
-//   },
-//   { sequelize, modelName: "user" }
-// );
-
-// sequelize
-//   .sync()
-//   .then(() =>
-//     User.create({
-//       username: "janedoe",
-//       birthday: new Date(1980, 6, 20)
-//     })
-//   )
-//   .then(jane => {
-//     console.log(jane.toJSON());
-//   });
 
 module.exports = app;
