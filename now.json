@@ -3,8 +3,10 @@
   "builds": [
     {
       "src": "src/app.js",
-      "use": "@now/node@canary",
-      "config": { "bundle": false }
+      "use": "@now/node",
+      "env": {
+        "DB_HOST": "@db-host"
+      }
     },
     {
       "src": "index.html",
