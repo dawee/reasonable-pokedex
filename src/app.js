@@ -125,25 +125,26 @@ const resolvers = {
         port: Number(process.env.DB_PORT)
       });
 
-      client.connect();
+      return "client";
+      // client.connect();
 
-      return new Promise(resolve => {
-        client.query(
-          `CREATE TABLE films (
-            code        char(5) CONSTRAINT firstkey PRIMARY KEY,
-            title       varchar(40) NOT NULL,
-            did         integer NOT NULL,
-            date_prod   date,
-            kind        varchar(10),
-            len         interval hour to minute
-        );`,
-          (err, res) => {
-            console.log(err, res);
-            client.end();
-            resolve("done");
-          }
-        );
-      });
+      // return new Promise(resolve => {
+      //   client.query(
+      //     `CREATE TABLE films (
+      //       code        char(5) CONSTRAINT firstkey PRIMARY KEY,
+      //       title       varchar(40) NOT NULL,
+      //       did         integer NOT NULL,
+      //       date_prod   date,
+      //       kind        varchar(10),
+      //       len         interval hour to minute
+      //   );`,
+      //     (err, res) => {
+      //       console.log(err, res);
+      //       client.end();
+      //       resolve("done");
+      //     }
+      //   );
+      // });
     },
     pokemons: (_source, { offset }, { dataSources }) =>
       dataSources.pokeAPI.getList(offset)
