@@ -114,7 +114,7 @@ const resolvers = {
       //     })
       //   )
       //   .then(jane => JSON.stringify(jane.toJSON(), null, 2));
-      return process.env.DB_HOST;
+      return process.env.DB_PORT;
     },
     pokemons: (_source, { offset }, { dataSources }) =>
       dataSources.pokeAPI.getList(offset)

@@ -1,7 +1,8 @@
 {
   "version": 2,
   "env": {
-    "DB_HOST": "@db-host"
+    "DB_HOST": "@db-host",
+    "DB_PORT": "444"
   },
   "builds": [
     {
