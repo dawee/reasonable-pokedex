@@ -91,29 +91,59 @@ class User extends Sequelize.Model {}
 const resolvers = {
   Query: {
     foo: () => {
-      const sequelize = new Sequelize(
-        `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${
-          process.env.DB_HOST
-        }:${process.env.DB_PORT}/${process.env.DB_NAME}`
-      );
+      // const sequelize = new Sequelize(
+      //   `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${
+      //     process.env.DB_HOST
+      //   }:${process.env.DB_PORT}/${process.env.DB_NAME}`
+      // );
 
-      User.init(
-        {
-          username: Sequelize.STRING,
-          birthday: Sequelize.DATE
-        },
-        { sequelize, modelName: "user" }
-      );
+      // User.init(
+      //   {
+      //     username: Sequelize.STRING,
+      //     birthday: Sequelize.DATE
+      //   },
+      //   { sequelize, modelName: "user" }
+      // );
 
-      return sequelize
-        .sync()
-        .then(() =>
-          User.create({
-            username: "janedoe",
-            birthday: new Date(1980, 6, 20)
-          })
-        )
-        .then(_jane => "done");
+      // return sequelize
+      //   .sync()
+      //   .then(() =>
+      //     User.create({
+      //       username: "janedoe",
+      //       birthday: new Date(1980, 6, 20)
+      //     })
+      //   )
+      //   .then(_jane => "done");
+
+      const { Client } = require("pg");
+
+      const client = new Client({
+        user: process.env.DB_USER,
+        host: process.env.DB_HOST,
+        database: process.env.DB_NAME,
+        password: process.env.DB_PASSWORD,
+        port: Number(process.env.DB_PORT)
+      });
+
+      client.connect();
+
+      return new Promise(resolve => {
+        client.query(
+          `CREATE TABLE films (
+            code        char(5) CONSTRAINT firstkey PRIMARY KEY,
+            title       varchar(40) NOT NULL,
+            did         integer NOT NULL,
+            date_prod   date,
+            kind        varchar(10),
+            len         interval hour to minute
+        );`,
+          (err, res) => {
+            console.log(err, res);
+            client.end();
+            resolve("done");
+          }
+        );
+      });
     },
     pokemons: (_source, { offset }, { dataSources }) =>
       dataSources.pokeAPI.getList(offset)
