@@ -1,5 +1,6 @@
 const cors = require("cors");
 const express = require("express");
+const pg = require("pg");
 const { ApolloServer, gql } = require("apollo-server-express");
 const { RESTDataSource } = require("apollo-datasource-rest");
 
