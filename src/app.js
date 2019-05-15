@@ -125,8 +125,15 @@ const resolvers = {
         port: Number(process.env.DB_PORT)
       });
 
-      return "client";
-      // client.connect();
+      return new Promise(resolve => {
+        client.connect(function(err) {
+          if (err) {
+            return "error";
+          } else {
+            return "ok";
+          }
+        });
+      });
 
       // return new Promise(resolve => {
       //   client.query(
