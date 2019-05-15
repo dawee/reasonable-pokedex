@@ -1,9 +1,7 @@
 {
   "version": 2,
-  "build": {
-    "env": {
-      "DB_HOST": "@db-host"
-    }
+  "env": {
+    "DB_HOST": "@db-host"
   },
   "builds": [
     {
