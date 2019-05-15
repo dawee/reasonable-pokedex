@@ -3,7 +3,8 @@
   "builds": [
     {
       "src": "src/app.js",
-      "use": "@now/node"
+      "use": "@now/node",
+      "config": { "bundle": false }
     },
     {
       "src": "index.html",
