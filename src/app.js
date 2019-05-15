@@ -73,7 +73,6 @@ const typeDefs = gql`
 
   type Query {
     pokemons(offset: Int!): [Pokemon!]!
-    myPokemons: [Pokemon!]!
   }
 `;
 
