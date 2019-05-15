@@ -87,13 +87,6 @@ const dataSources = () => {
 };
 
 class User extends Sequelize.Model {}
-User.init(
-  {
-    username: Sequelize.STRING,
-    birthday: Sequelize.DATE
-  },
-  { sequelize, modelName: "user" }
-);
 
 const resolvers = {
   Query: {
@@ -102,6 +95,14 @@ const resolvers = {
         `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${
           process.env.DB_HOST
         }:${process.env.DB_PORT}/${process.env.DB_NAME}`
+      );
+
+      User.init(
+        {
+          username: Sequelize.STRING,
+          birthday: Sequelize.DATE
+        },
+        { sequelize, modelName: "user" }
       );
 
       return sequelize
