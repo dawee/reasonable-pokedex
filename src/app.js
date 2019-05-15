@@ -1,6 +1,5 @@
 const cors = require("cors");
 const express = require("express");
-const pg = require("pg");
 const Sequelize = require("sequelize");
 const { ApolloServer, gql } = require("apollo-server-express");
 const { RESTDataSource } = require("apollo-datasource-rest");
@@ -87,34 +86,33 @@ const dataSources = () => {
   };
 };
 
+class User extends Sequelize.Model {}
+User.init(
+  {
+    username: Sequelize.STRING,
+    birthday: Sequelize.DATE
+  },
+  { sequelize, modelName: "user" }
+);
+
 const resolvers = {
   Query: {
     foo: () => {
-      return JSON.stringify(process.env);
-      // const sequelize = new Sequelize(
-      //   `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${
-      //     process.env.DB_HOST
-      //   }:${process.env.DB_PORT}/${process.env.DB_NAME}`
-      // );
+      const sequelize = new Sequelize(
+        `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${
+          process.env.DB_HOST
+        }:${process.env.DB_PORT}/${process.env.DB_NAME}`
+      );
 
-      // class User extends Sequelize.Model {}
-      // User.init(
-      //   {
-      //     username: Sequelize.STRING,
-      //     birthday: Sequelize.DATE
-      //   },
-      //   { sequelize, modelName: "user" }
-      // );
-
-      // return sequelize
-      //   .sync()
-      //   .then(() =>
-      //     User.create({
-      //       username: "janedoe",
-      //       birthday: new Date(1980, 6, 20)
-      //     })
-      //   )
-      //   .then(jane => JSON.stringify(jane.toJSON(), null, 2));
+      return sequelize
+        .sync()
+        .then(() =>
+          User.create({
+            username: "janedoe",
+            birthday: new Date(1980, 6, 20)
+          })
+        )
+        .then(_jane => "done");
     },
     pokemons: (_source, { offset }, { dataSources }) =>
       dataSources.pokeAPI.getList(offset)
