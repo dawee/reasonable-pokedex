@@ -1,12 +1,14 @@
 {
   "version": 2,
+  "build": {
+    "env": {
+      "DB_HOST": "@db-host"
+    }
+  },
   "builds": [
     {
       "src": "src/app.js",
-      "use": "@now/node",
-      "env": {
-        "DB_HOST": "@db-host"
-      }
+      "use": "@now/node"
     },
     {
       "src": "index.html",
