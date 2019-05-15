@@ -87,9 +87,7 @@ const dataSources = () => {
 const resolvers = {
   Query: {
     pokemons: (_source, { offset }, { dataSources }) =>
-      dataSources.pokeAPI.getList(offset),
-    myPokemons: (_source, _args, { dataSources }) =>
-      Promise.all(ownPokemons.map(id => dataSources.pokeAPI.getById(id)))
+      dataSources.pokeAPI.getList(offset)
   },
   Mutation: {
     explore: async (_source, _args, { dataSources }) => {
