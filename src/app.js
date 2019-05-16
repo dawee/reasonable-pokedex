@@ -98,12 +98,13 @@ const client = new Client({
   port: Number(process.env.DB_PORT)
 });
 
+let res = "not called";
+
 client.connect(function(err) {
   if (err) {
-    console.log("error");
+    res = `${err}`;
   } else {
-    console.log("ok");
-    client.close();
+    res = "ok";
   }
 });
 
@@ -134,25 +135,25 @@ const resolvers = {
       //   )
       //   .then(_jane => "done");
 
-      const { Client } = require("pg");
+      // const { Client } = require("pg");
 
-      const client = new Client({
-        user: process.env.DB_USER,
-        host: process.env.DB_HOST,
-        database: process.env.DB_NAME,
-        password: process.env.DB_PASSWORD,
-        port: Number(process.env.DB_PORT)
-      });
+      // const client = new Client({
+      //   user: process.env.DB_USER,
+      //   host: process.env.DB_HOST,
+      //   database: process.env.DB_NAME,
+      //   password: process.env.DB_PASSWORD,
+      //   port: Number(process.env.DB_PORT)
+      // });
 
-      return new Promise(resolve => {
-        client.connect(function(err) {
-          if (err) {
-            return "error";
-          } else {
-            return "ok";
-          }
-        });
-      });
+      // return new Promise(resolve => {
+      //   client.connect(function(err) {
+      //     if (err) {
+      //       return "error";
+      //     } else {
+      //       return "ok";
+      //     }
+      //   });
+      // });
 
       // return new Promise(resolve => {
       //   client.query(
@@ -171,6 +172,7 @@ const resolvers = {
       //     }
       //   );
       // });
+      return res;
     },
     pokemons: (_source, { offset }, { dataSources }) =>
       dataSources.pokeAPI.getList(offset)
