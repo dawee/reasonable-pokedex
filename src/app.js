@@ -98,42 +98,32 @@ const client = new Client({
   port: Number(process.env.DB_PORT)
 });
 
-let res = "not called";
-
-client.connect(function(err) {
-  if (err) {
-    res = `${err}`;
-  } else {
-    res = "ok";
-  }
-});
-
 const resolvers = {
   Query: {
     foo: () => {
-      // const sequelize = new Sequelize(
-      //   `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${
-      //     process.env.DB_HOST
-      //   }:${process.env.DB_PORT}/${process.env.DB_NAME}`
-      // );
+      const sequelize = new Sequelize(
+        `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${
+          process.env.DB_HOST
+        }:${process.env.DB_PORT}/${process.env.DB_NAME}`
+      );
 
-      // User.init(
-      //   {
-      //     username: Sequelize.STRING,
-      //     birthday: Sequelize.DATE
-      //   },
-      //   { sequelize, modelName: "user" }
-      // );
+      User.init(
+        {
+          username: Sequelize.STRING,
+          birthday: Sequelize.DATE
+        },
+        { sequelize, modelName: "user" }
+      );
 
-      // return sequelize
-      //   .sync()
-      //   .then(() =>
-      //     User.create({
-      //       username: "janedoe",
-      //       birthday: new Date(1980, 6, 20)
-      //     })
-      //   )
-      //   .then(_jane => "done");
+      return sequelize
+        .sync()
+        .then(() =>
+          User.create({
+            username: "janedoe",
+            birthday: new Date(1980, 6, 20)
+          })
+        )
+        .then(_jane => "done");
 
       // const { Client } = require("pg");
 
