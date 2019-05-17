@@ -13,14 +13,14 @@
       "use": "@now/node"
     },
     {
-      "src": "index.html",
+      "src": "src/index.html",
       "use": "@now/static"
     }
   ],
   "routes": [
     {
       "src": "/",
-      "dest": "index.html"
+      "dest": "src/index.html"
     },
     {
       "src": "/graphql",

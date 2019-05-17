@@ -1,9 +1,9 @@
 {
   "name": "reasonable-pokedex",
   "version": "1.0.0",
-  "main": "src/micro.js",
+  "main": "src/app.js",
   "scripts": {
-    "start": "nodemon src/dev.js"
+    "start": "nodemon scripts/run-local-server.js"
   },
   "license": "MIT",
   "dependencies": {
