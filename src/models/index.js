@@ -1,7 +1,7 @@
-const seenPokemon = require("./seen-pokemon");
-const user = require("./user");
+const { SeenPokemon } = require("./seen-pokemon");
+const { User } = require("./user");
 
 module.exports = {
-  user,
-  seenPokemon
+  User,
+  SeenPokemon
 };

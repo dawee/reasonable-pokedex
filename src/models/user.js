@@ -1,17 +1,19 @@
 const { Model, STRING } = require("sequelize");
-const { model: SeenPokemon } = require("./seen-pokemon");
+const { SeenPokemon } = require("./seen-pokemon");
 
-const name = "user";
+class User extends Model {
+  static name = "users";
 
-const schema = {
-  token: {
-    type: STRING,
-    allowNull: false
+  static schema = {
+    token: {
+      type: STRING,
+      allowNull: false
+    }
+  };
+
+  static associate() {
+    User.hasMany(SeenPokemon);
   }
-};
+}
 
-class User extends Model {}
-
-const associate = () => User.hasMany(SeenPokemon);
-
-module.exports = { associate, model: User, name, schema };
+module.exports = { User };

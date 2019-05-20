@@ -9,13 +9,13 @@ const dbName = process.env.DB_NAME;
 const uri = `postgres://${user}:${password}@${host}:${port}/${dbName}`;
 const sequelize = new Sequelize(uri);
 
-Object.values(models).forEach(({ model, name, schema }) =>
-  model.init(schema, { sequelize, modelName: name })
+Object.values(models).forEach(model =>
+  model.init(model.schema, { sequelize, modelName: model.name })
 );
 
-Object.values(models).forEach(({ associate }) => {
-  if (associate) {
-    associate();
+Object.values(models).forEach(model => {
+  if (model.associate) {
+    model.associate();
   }
 });
 

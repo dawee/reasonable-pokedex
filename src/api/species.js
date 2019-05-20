@@ -26,12 +26,18 @@ const resolvers = {
         dataSources: { pokeAPI }
       } = context;
 
+      // const { sequelize, User } = context;
+
+      // await User.create({ token: "foo" });
+
       return pokeAPI.getList(limit, offset);
     }
   },
   PokemonSpecies: {
     id: data => data.name,
-    seen: () => false,
+    seen: async (_data, _args, context) => {
+      return false;
+    },
     sprite: async (data, _args, context) => {
       const {
         dataSources: { pokeAPI }
