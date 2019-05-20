@@ -1,14 +1,18 @@
 const { Model, STRING } = require("sequelize");
 
 class SeenPokemon extends Model {
-  static name = "seen_pokemons";
+  static get name() {
+    return "seen_pokemons";
+  }
 
-  static schema = {
-    pokemonName: {
-      type: STRING,
-      allowNull: false
-    }
-  };
+  static get schema() {
+    return {
+      pokemonName: {
+        type: STRING,
+        allowNull: false
+      }
+    };
+  }
 }
 
 module.exports = { SeenPokemon };
