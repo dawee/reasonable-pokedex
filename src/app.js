@@ -2,20 +2,13 @@ const { ApolloServer } = require("apollo-server-express");
 const cors = require("cors");
 const express = require("express");
 const models = require("./models");
-const { sequelize } = require("./db");
+const { getDBContext } = require("./db");
 const { dataSources } = require("./sources");
 const { resolvers, typeDefs } = require("./api");
 
 const app = express();
 const server = new ApolloServer({
-  context: async () => {
-    await sequelize.sync();
-
-    return {
-      ...models,
-      sequelize
-    };
-  },
+  context: getDBContext,
   dataSources,
   formatError: error => {
     console.error(error);
